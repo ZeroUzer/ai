@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from shops.models import Shop, Category, Product
+from shops.models import Shop, Category, Product, Brand
 import random
 
 class Command(BaseCommand):
@@ -25,6 +25,17 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING('В магазине нет категорий. Создайте хотя бы одну категорию.'))
             return
         
+        # Создаем бренды для магазина, если их нет
+        brand_names = ['Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Sony', 'LG', 'HP', 'Dell', 'Asus', 'Acer']
+        brands = []
+        for brand_name in brand_names:
+            brand, created = Brand.objects.get_or_create(
+                shop=shop,
+                name=brand_name,
+                defaults={'description': f'Бренд {brand_name}'}
+            )
+            brands.append(brand)
+        
         # Списки для генерации
         product_names = [
             'Смартфон', 'Ноутбук', 'Наушники', 'Клавиатура', 'Мышь', 'Монитор', 
@@ -44,8 +55,6 @@ class Command(BaseCommand):
             'Энергоэффективный товар с длительным сроком службы.',
             'Стильный дизайн и высокая производительность.'
         ]
-        
-        brands = ['Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Sony', 'LG', 'HP', 'Dell', 'Asus', 'Acer']
         
         created_count = 0
         
