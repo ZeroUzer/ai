@@ -15,7 +15,6 @@ def ai_create_shop(request):
     if request.method == 'POST':
         shop_name = request.POST.get('shop_name')
         shop_description = request.POST.get('shop_description', '')
-        design_description = request.POST.get('design_description', '')
         
         if not shop_name:
             messages.error(request, 'Введите название магазина')
@@ -23,25 +22,19 @@ def ai_create_shop(request):
         
         try:
             ai = init_ai()
-            
             generated_description = ai.generate_shop_description(shop_name, shop_description)
             categories = ai.generate_categories(shop_name, shop_description)
-            custom_css = ai.generate_custom_css(shop_name, design_description)
             
             request.session['ai_shop_data'] = {
                 'name': shop_name,
                 'description': generated_description,
-                'categories': categories,
-                'custom_css': custom_css,
-                'design_description': design_description,
+                'categories': categories
             }
             
             return render(request, 'ai_assistant/confirm_shop.html', {
                 'shop_name': shop_name,
                 'generated_description': generated_description,
-                'categories': categories,
-                'custom_css': custom_css,
-                'design_description': design_description,
+                'categories': categories
             })
         except Exception as e:
             messages.error(request, f'Ошибка при генерации: {str(e)}')
@@ -71,19 +64,14 @@ def confirm_create_shop(request):
             owner=request.user,
             name=shop_data['name'],
             slug=slug,
-            description=shop_data['description'],
-            custom_css=shop_data.get('custom_css', ''),
+            description=shop_data['description']
         )
         
         for category_name in shop_data['categories'][:5]:
             if category_name and len(category_name) <= 100:
-                Category.objects.create(
-                    shop=shop,
-                    name=category_name,
-                    order=0
-                )
+                Category.objects.create(shop=shop, name=category_name, order=0)
         
-        messages.success(request, f'Магазин "{shop.name}" успешно создан с помощью ИИ!')
+        messages.success(request, f'Магазин "{shop.name}" успешно создан!')
         
         if 'ai_shop_data' in request.session:
             del request.session['ai_shop_data']
@@ -117,7 +105,6 @@ def ai_chat(request, shop_slug):
         
         try:
             shop = Shop.objects.get(slug=shop_slug)
-            
             products = shop.products.all()[:20]
             if products.exists():
                 products_info = "\n".join([f"- {p.name}: {p.price} руб. (в наличии: {p.stock} шт.)" for p in products])
@@ -128,9 +115,7 @@ def ai_chat(request, shop_slug):
             answer = ai.chat_with_customer(question, products_info)
             
             return JsonResponse({'answer': answer})
-        except Shop.DoesNotExist:
-            return JsonResponse({'answer': 'Магазин не найден'}, status=404)
         except Exception as e:
-            return JsonResponse({'answer': f'Извините, произошла ошибка: {str(e)}'})
+            return JsonResponse({'answer': f'Ошибка: {str(e)}'})
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
