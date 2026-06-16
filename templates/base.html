@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="/static/css/amazon-style.css">
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-top">
             <div class="logo">
@@ -25,8 +24,9 @@
                             </svg>
                         </div>
                         <div class="user-dropdown">
+                            <a href="{% url 'profile' %}">Мой профиль</a>
                             {% if is_customer %}
-                                <a href="{% url 'customer_profile' 'shop-1-1780731851' %}">Мой профиль</a>
+                                <a href="{% url 'customer_profile' 'shop-1-1780731851' %}">Личный кабинет</a>
                                 <a href="{% url 'customer_orders' 'shop-1-1780731851' %}">Мои заказы</a>
                                 <a href="{% url 'favorites_list' 'shop-1-1780731851' %}">Избранное</a>
                                 <a href="{% url 'cart_view' 'shop-1-1780731851' %}">Корзина</a>
@@ -39,12 +39,12 @@
                                 <a href="{% url 'admin_dashboard' %}">Панель управления</a>
                             {% endif %}
                             <a href="/admin/">Админка Django</a>
-                            <a href="/admin/logout/" style="color: var(--danger);">Выйти</a>
+                            <a href="{% url 'logout' %}" style="color: var(--danger);">Выйти</a>
                         </div>
                     </div>
                 {% else %}
-                    <a href="/admin/login/" class="btn btn-outline" style="padding: var(--spacing-xs) var(--spacing-md);">Войти</a>
-                    <a href="/admin/auth/user/add/" class="btn btn-primary" style="padding: var(--spacing-xs) var(--spacing-md);">Регистрация</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline" style="padding: var(--spacing-xs) var(--spacing-md);">Войти</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary" style="padding: var(--spacing-xs) var(--spacing-md);">Регистрация</a>
                 {% endif %}
             </div>
         </div>
@@ -52,13 +52,15 @@
         <nav class="nav">
             <div class="nav-links">
                 <a href="/">Главная</a>
-                {% if is_seller or is_super_admin %}
-                    <a href="/shops/my/">Мои магазины</a>
-                    <a href="{% url 'ai_create_shop' %}">Создать с ИИ</a>
-                {% endif %}
-                {% if is_customer or is_super_admin %}
-                    <a href="{% url 'cart_view' 'shop-1-1780731851' %}">Корзина</a>
-                    <a href="{% url 'favorites_list' 'shop-1-1780731851' %}">Избранное</a>
+                {% if user.is_authenticated %}
+                    {% if is_seller or is_super_admin %}
+                        <a href="/shops/my/">Мои магазины</a>
+                        <a href="{% url 'ai_create_shop' %}">Создать с ИИ</a>
+                    {% endif %}
+                    {% if is_customer or is_super_admin %}
+                        <a href="{% url 'cart_view' 'shop-1-1780731851' %}">Корзина</a>
+                        <a href="{% url 'favorites_list' 'shop-1-1780731851' %}">Избранное</a>
+                    {% endif %}
                 {% endif %}
                 {% if is_super_admin %}
                     <a href="{% url 'admin_dashboard' %}">Панель управления</a>

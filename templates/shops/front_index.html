@@ -3,6 +3,249 @@
 {% block title %}{{ shop.name }} | Интернет-магазин{% endblock %}
 
 {% block content %}
+{% if shop.design_config %}
+<style>
+    /* Глобальные переменные из JSON */
+    :root {
+        --primary: {{ shop.design_config.colors.primary }};
+        --primary-dark: {{ shop.design_config.colors.primary_dark }};
+        --secondary: {{ shop.design_config.colors.secondary }};
+        --bg-color: {{ shop.design_config.colors.background }};
+        --text-color: {{ shop.design_config.colors.text }};
+        --card-bg: {{ shop.design_config.colors.card_bg }};
+        --accent: {{ shop.design_config.colors.accent }};
+        --card-radius: {{ shop.design_config.layout.card_radius }};
+        --btn-radius: {{ shop.design_config.layout.button_radius }};
+        --font-heading: "{{ shop.design_config.typography.heading_font }}", sans-serif;
+        --font-body: "{{ shop.design_config.typography.body_font }}", sans-serif;
+        --shadow-intensity: {{ shop.design_config.layout.shadow_intensity }};
+        --spacing: {{ shop.design_config.layout.spacing }};
+    }
+    
+    /* Основные стили */
+    body {
+        background: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-body);
+        transition: all 0.3s ease;
+    }
+    
+    /* Шапка магазина */
+    .shop-header {
+        background: {% if shop.design_config.effects.gradient %}
+            linear-gradient(135deg, var(--primary), var(--primary-dark))
+        {% else %}
+            var(--primary)
+        {% endif %};
+        {% if shop.design_config.effects.glassmorphism %}
+            backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        {% endif %}
+        border-radius: var(--card-radius);
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 32px;
+        transition: all 0.3s ease;
+    }
+    
+    .shop-header h1 {
+        color: white;
+        font-family: var(--font-heading);
+        font-size: 36px;
+        margin-bottom: 12px;
+    }
+    
+    .shop-header p {
+        color: rgba(255,255,255,0.9);
+        font-size: 18px;
+    }
+    
+    /* Карточки товаров */
+    .product-card {
+        background: var(--card-bg);
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        {% if shop.design_config.layout.shadow_intensity == 'strong' %}
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        {% elif shop.design_config.layout.shadow_intensity == 'medium' %}
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        {% else %}
+            box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+        {% endif %}
+        {% if shop.design_config.effects.glassmorphism %}
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+        {% endif %}
+    }
+    
+    .product-card:hover {
+        transform: translateY(-8px);
+        {% if shop.design_config.layout.shadow_intensity == 'strong' %}
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        {% else %}
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        {% endif %}
+    }
+    
+    .product-title {
+        font-family: var(--font-heading);
+        color: var(--text-color);
+    }
+    
+    .product-title a {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .product-title a:hover {
+        color: var(--accent);
+    }
+    
+    .product-price {
+        color: var(--accent);
+        font-family: var(--font-heading);
+        font-size: 24px;
+        font-weight: 700;
+    }
+    
+    /* Кнопки */
+    .btn-primary {
+        background: var(--primary);
+        border-radius: var(--btn-radius);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: var(--font-body);
+        font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-secondary {
+        background: var(--secondary);
+        border-radius: var(--btn-radius);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: var(--font-body);
+        font-weight: 600;
+    }
+    
+    /* Бейджи */
+    .badge {
+        border-radius: var(--btn-radius);
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .badge-info {
+        background: var(--secondary);
+        color: white;
+    }
+    
+    /* Сайдбар */
+    .sidebar-card {
+        background: var(--card-bg);
+        border-radius: var(--card-radius);
+        padding: 20px;
+        margin-bottom: 24px;
+        {% if shop.design_config.effects.glassmorphism %}
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+        {% else %}
+            box-shadow: var(--shadow-sm);
+        {% endif %}
+    }
+    
+    .sidebar-card h3 {
+        color: var(--text-color);
+        font-family: var(--font-heading);
+        margin-bottom: 16px;
+    }
+    
+    .sidebar-card a {
+        color: var(--text-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .sidebar-card a:hover {
+        color: var(--accent);
+    }
+    
+    .categories-list li {
+        list-style: none;
+        margin-bottom: 10px;
+    }
+    
+    /* Анимация карточек при появлении */
+    {% if shop.design_config.effects.animation %}
+    .product-card {
+        animation: fadeInUp 0.6s ease forwards;
+        opacity: 0;
+    }
+    
+    .product-card:nth-child(1) { animation-delay: 0.05s; }
+    .product-card:nth-child(2) { animation-delay: 0.1s; }
+    .product-card:nth-child(3) { animation-delay: 0.15s; }
+    .product-card:nth-child(4) { animation-delay: 0.2s; }
+    .product-card:nth-child(5) { animation-delay: 0.25s; }
+    .product-card:nth-child(6) { animation-delay: 0.3s; }
+    .product-card:nth-child(7) { animation-delay: 0.35s; }
+    .product-card:nth-child(8) { animation-delay: 0.4s; }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    {% endif %}
+    
+    /* Кастомный скроллбар */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: var(--bg-color);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+</style>
+{% endif %}
+
 <!-- Breadcrumbs -->
 <div class="breadcrumbs">
     <a href="/">Главная</a>
@@ -11,56 +254,48 @@
 </div>
 
 <!-- Shop Header -->
-<div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 40px; text-align: center; border-radius: var(--radius-lg); margin-bottom: 32px;">
-    <h1 style="color: white; margin-bottom: 12px;">{{ shop.name }}</h1>
-    <p style="color: rgba(255,255,255,0.9); font-size: 18px;">{{ shop.description }}</p>
+<div class="shop-header">
+    <h1>{{ shop.name }}</h1>
+    <p>{{ shop.description }}</p>
 </div>
 
 <div style="display: flex; gap: 32px; flex-wrap: wrap;">
-    <!-- Sidebar - Категории и поиск -->
+    <!-- Sidebar -->
     <div style="width: 280px; flex-shrink: 0;">
-        <div class="card" style="margin-bottom: 24px;">
-            <div class="card-body">
-                <h3>Поиск</h3>
-                <form method="get" action="{% url 'search_products' shop.slug %}">
-                    <input type="text" name="q" placeholder="Поиск товаров..." class="form-control" style="margin-bottom: 12px;">
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Найти</button>
-                </form>
-            </div>
+        <div class="sidebar-card">
+            <h3>Поиск</h3>
+            <form method="get" action="{% url 'search_products' shop.slug %}">
+                <input type="text" name="q" placeholder="Поиск товаров..." class="form-control" style="margin-bottom: 12px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Найти</button>
+            </form>
         </div>
         
-        <div class="card" style="margin-bottom: 24px;">
-            <div class="card-body">
-                <h3>Категории</h3>
-                <ul style="list-style: none; padding: 0; margin: 0;">
-                    {% for cat in categories %}
-                        <li style="margin-bottom: 10px;">
-                            <a href="{% url 'category_products' shop.slug cat.id %}">{{ cat.name }}</a>
-                        </li>
-                    {% empty %}
-                        <li style="color: var(--gray-500);">Категорий пока нет</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        
-        <div class="card">
-            <div class="card-body">
-                <h3>Новости</h3>
-                {% for news in news_list %}
-                    <div style="margin-bottom: 12px;">
-                        <a href="{% url 'news_detail' shop.slug news.id %}" style="font-weight: 500;">{{ news.title }}</a>
-                        <div style="font-size: var(--font-size-xs); color: var(--gray-500);">{{ news.created_at|date:"d.m.Y" }}</div>
-                    </div>
+        <div class="sidebar-card">
+            <h3>Категории</h3>
+            <ul class="categories-list" style="padding: 0;">
+                {% for cat in categories %}
+                    <li><a href="{% url 'category_products' shop.slug cat.id %}">{{ cat.name }}</a></li>
                 {% empty %}
-                    <p style="color: var(--gray-500);">Новостей пока нет</p>
+                    <li style="color: var(--gray-500);">Категорий пока нет</li>
                 {% endfor %}
-                <a href="{% url 'shop_news' shop.slug %}" style="font-size: var(--font-size-sm);">Все новости →</a>
-            </div>
+            </ul>
+        </div>
+        
+        <div class="sidebar-card">
+            <h3>Новости</h3>
+            {% for news in news_list %}
+                <div style="margin-bottom: 12px;">
+                    <a href="{% url 'news_detail' shop.slug news.id %}" style="font-weight: 500;">{{ news.title }}</a>
+                    <div style="font-size: var(--font-size-xs); color: var(--gray-500);">{{ news.created_at|date:"d.m.Y" }}</div>
+                </div>
+            {% empty %}
+                <p style="color: var(--gray-500);">Новостей пока нет</p>
+            {% endfor %}
+            <a href="{% url 'shop_news' shop.slug %}" style="font-size: var(--font-size-sm);">Все новости →</a>
         </div>
     </div>
     
-    <!-- Products Grid - Товары -->
+    <!-- Products Grid -->
     <div style="flex: 1;">
         <h2>Товары</h2>
         
@@ -96,9 +331,7 @@
                     {% if products.has_previous %}
                         <a href="?page={{ products.previous_page_number }}" class="btn btn-secondary">← Назад</a>
                     {% endif %}
-                    
                     <span class="btn" style="background: var(--primary); color: white; cursor: default;">{{ products.number }} / {{ products.paginator.num_pages }}</span>
-                    
                     {% if products.has_next %}
                         <a href="?page={{ products.next_page_number }}" class="btn btn-secondary">Вперёд →</a>
                     {% endif %}

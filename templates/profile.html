@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой профиль{% endblock %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="/">Главная</a>
+    <span class="breadcrumbs-separator">›</span>
+    <span>Мой профиль</span>
+</div>
+
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="card">
+        <div class="card-body">
+            <h1>Мой профиль</h1>
+            
+            <div style="margin-bottom: 20px;">
+                <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Роль:</strong> 
+                    {% if is_seller %}
+                        <span class="badge badge-info">Продавец</span>
+                    {% elif is_customer %}
+                        <span class="badge badge-success">Покупатель</span>
+                    {% endif %}
+                </p>
+                <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y H:i" }}</p>
+            </div>
+            
+            <hr>
+            
+            <div style="margin-top: 20px;">
+                <h3>Доступные действия</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    {% if is_seller %}
+                        <a href="{% url 'my_shops' %}" class="btn btn-primary">Мои магазины</a>
+                        <a href="{% url 'ai_create_shop' %}" class="btn btn-primary">Создать магазин с ИИ</a>
+                    {% endif %}
+                    
+                    {% if is_customer %}
+                        <a href="{% url 'customer_profile' 'shop-1-1780731851' %}" class="btn btn-primary">Личный кабинет</a>
+                        <a href="{% url 'customer_orders' 'shop-1-1780731851' %}" class="btn btn-secondary">Мои заказы</a>
+                    {% endif %}
+                    
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

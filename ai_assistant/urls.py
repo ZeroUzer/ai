@@ -6,4 +6,5 @@ urlpatterns = [
     path('confirm/', views.confirm_create_shop, name='confirm_create_shop'),
     path('generate-description/', views.generate_product_description_ajax, name='generate_description'),
     path('chat/<slug:shop_slug>/', views.ai_chat, name='ai_chat'),
+    path('global-search/', views.global_search, name='global_search'),
 ]

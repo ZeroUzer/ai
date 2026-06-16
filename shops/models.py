@@ -6,7 +6,7 @@ class Shop(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название магазина')
     slug = models.SlugField(unique=True, verbose_name='URL-адрес')
     description = models.TextField(blank=True, verbose_name='Описание')
-    custom_css = models.TextField(blank=True, null=True, verbose_name='Кастомный CSS')
+    design_config = models.JSONField(default=dict, blank=True, verbose_name='Конфигурация дизайна')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     
     def __str__(self):

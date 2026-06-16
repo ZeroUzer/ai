@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-body">
             <h1>Создать магазин с помощью ИИ</h1>
-            <p style="color: var(--gray-600); margin-bottom: 24px;">Расскажите, какой магазин вы хотите создать, и искусственный интеллект поможет вам!</p>
+            <p style="color: var(--gray-600); margin-bottom: 24px;">Расскажите о вашем магазине, и искусственный интеллект создаст уникальный дизайн и контент.</p>
             
             <form method="post">
                 {% csrf_token %}
@@ -28,6 +28,12 @@
                 <div class="form-group">
                     <label class="form-label">Что вы продаете? (необязательно)</label>
                     <textarea name="shop_description" rows="3" class="form-control" placeholder="Например: электроника, смартфоны, ноутбуки..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Как должен выглядеть магазин? (цвета, стиль, оформление)</label>
+                    <textarea name="design_description" rows="4" class="form-control" placeholder="Например: тёмная тема, золотые акценты, круглые углы, премиальный стиль"></textarea>
+                    <small style="color: var(--gray-500);">Опишите желаемый стиль, и ИИ создаст уникальный дизайн для вашего магазина</small>
                 </div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px;">

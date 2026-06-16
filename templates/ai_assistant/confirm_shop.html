@@ -35,6 +35,12 @@
                     </ul>
                 </div>
                 
+                <div style="background: #1e1e1e; padding: 20px; border-radius: var(--radius-md); margin-bottom: 24px; color: #d4d4d4;">
+                    <h3 style="color: white;">Сгенерированный дизайн</h3>
+                    <pre style="background: #2d2d2d; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; max-height: 300px;"><code>{{ design_config|safe }}</code></pre>
+                    <p style="color: #888; margin-top: 12px; font-size: 12px;">Настройки дизайна будут применены к вашему магазину</p>
+                </div>
+                
                 <div style="display: flex; gap: 16px;">
                     <button type="submit" class="btn btn-primary" style="flex: 1;">Подтвердить и создать магазин</button>
                     <a href="{% url 'ai_create_shop' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Назад</a>
